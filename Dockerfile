@@ -20,6 +20,6 @@ COPY docker/Caddyfile.template /etc/caddy/Caddyfile.template
 
 RUN chmod 0755 /usr/local/bin/entrypoint.sh
 
-EXPOSE 2222 8080
+EXPOSE 8080 2222
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]

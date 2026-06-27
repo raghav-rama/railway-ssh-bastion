@@ -11,7 +11,7 @@ Flow:
 Railway is a workable TCP jump host, not a full VPS replacement for WireGuard. This image intentionally does not install or configure WireGuard or UFW. The container only runs:
 
 - `sshd` on port `2222` for the public bastion entrypoint
-- `caddy` on `${PORT}` for Railway health checks
+- `caddy` on a non-SSH HTTP port for Railway health checks
 
 The existing `wg0.conf` file in this directory is unused by this setup.
 
@@ -21,14 +21,14 @@ Set these Railway environment variables:
 
 - `ADMIN_AUTHORIZED_KEYS`: one or more newline-separated SSH public keys for your own bastion login
 - `LAPTOP_TUNNEL_PUBLIC_KEY`: the public key used by the Ubuntu laptop to open the reverse tunnel
-- `PORT`: Railway injects this automatically for the HTTP health endpoint
+- `PORT`: optional; if Railway provides a value other than `2222`, Caddy will bind there, otherwise the image falls back to `8080`
 
 ## Railway setup
 
 1. Deploy this directory as a Docker service.
 2. Add `ADMIN_AUTHORIZED_KEYS` and `LAPTOP_TUNNEL_PUBLIC_KEY`.
 3. Configure a Railway TCP Proxy to forward the public SSH endpoint to container port `2222`.
-4. Keep the service HTTP port on `${PORT}` so Railway can reach `/health`.
+4. Keep the service HTTP listener on a non-SSH port. This image prefers Railway's `PORT` when it is safe and otherwise falls back to `8080`.
 5. Verify the health endpoint:
 
 ```bash
@@ -112,4 +112,4 @@ Run:
 bash tests/smoke.sh
 ```
 
-The smoke test builds the image, verifies startup fails without the required env vars, checks `/health`, confirms key-based SSH access works, verifies password auth is disabled, and inspects the restricted tunnel key entry.
+The smoke test builds the image, verifies startup fails without the required env vars, checks `/health`, confirms key-based SSH access works, verifies password auth is disabled, inspects the restricted tunnel key entry, and covers the `PORT=2222` collision case.

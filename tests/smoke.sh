@@ -69,3 +69,30 @@ fi
 
 docker exec "${CONTAINER_NAME}" sh -lc \
   "grep -F 'restrict,port-forwarding,permitlisten=\"localhost:2201\",no-pty,no-user-rc,no-X11-forwarding $(cat "${TMP_DIR}/laptop.pub")' /home/railway/.ssh/authorized_keys"
+
+docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
+
+docker run -d \
+  --rm \
+  --name "${CONTAINER_NAME}" \
+  -e PORT=2222 \
+  -e ADMIN_AUTHORIZED_KEYS="$(cat "${TMP_DIR}/admin.pub")" \
+  -e LAPTOP_TUNNEL_PUBLIC_KEY="$(cat "${TMP_DIR}/laptop.pub")" \
+  -p 18080:8080 \
+  -p 2222:2222 \
+  "${IMAGE_TAG}" >/dev/null
+
+for _ in $(seq 1 30); do
+  if curl -fsS http://127.0.0.1:18080/health >/dev/null; then
+    break
+  fi
+
+  if ! docker ps --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
+    echo "container should stay up when PORT matches the SSH port" >&2
+    exit 1
+  fi
+
+  sleep 1
+done
+
+curl -fsS http://127.0.0.1:18080/health | grep -q "ok"

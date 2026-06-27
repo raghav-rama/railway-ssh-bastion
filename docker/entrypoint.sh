@@ -9,9 +9,20 @@ require_env() {
   fi
 }
 
+pick_http_port() {
+  local candidate="${PORT:-8080}"
+
+  if [[ "${candidate}" == "2222" ]]; then
+    echo "PORT ${candidate} collides with sshd; using 8080 for HTTP health checks" >&2
+    candidate="8080"
+  fi
+
+  HTTP_PORT="${candidate}"
+}
+
 render_caddyfile() {
   local target="/run/Caddyfile"
-  sed "s/__PORT__/${PORT}/g" /etc/caddy/Caddyfile.template >"${target}"
+  sed "s/__PORT__/${HTTP_PORT}/g" /etc/caddy/Caddyfile.template >"${target}"
 }
 
 write_authorized_keys() {
@@ -49,7 +60,7 @@ start_services() {
 require_env ADMIN_AUTHORIZED_KEYS
 require_env LAPTOP_TUNNEL_PUBLIC_KEY
 
-PORT="${PORT:-8080}"
+pick_http_port
 
 if ! id -u railway >/dev/null 2>&1; then
   useradd --create-home --home-dir /home/railway --shell /bin/bash railway
