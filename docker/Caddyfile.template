@@ -1,0 +1,10 @@
+{
+	auto_https off
+	admin off
+}
+
+:__PORT__ {
+	@health path /health
+	respond @health "ok" 200
+	respond "railway-ssh-bastion" 200
+}

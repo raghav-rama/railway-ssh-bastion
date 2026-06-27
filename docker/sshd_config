@@ -1,0 +1,26 @@
+Port 2222
+ListenAddress 0.0.0.0
+Protocol 2
+PidFile /run/sshd.pid
+
+UsePAM no
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+AllowUsers railway
+
+AllowTcpForwarding yes
+AllowAgentForwarding no
+GatewayPorts no
+PermitTunnel no
+X11Forwarding no
+PermitTTY yes
+PrintMotd no
+PermitUserEnvironment no
+ClientAliveInterval 120
+ClientAliveCountMax 2
+
+Subsystem sftp internal-sftp
