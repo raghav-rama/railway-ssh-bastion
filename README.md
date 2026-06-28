@@ -8,12 +8,10 @@ Flow:
 
 ## Why this is SSH-only
 
-Railway is a workable TCP jump host, not a full VPS replacement for WireGuard. This image intentionally does not install or configure WireGuard or UFW. The container only runs:
+Railway is a workable TCP jump host, not a full VPS replacement for WireGuard. The container only runs:
 
 - `sshd` on port `2222` for the public bastion entrypoint
 - `caddy` on a non-SSH HTTP port for Railway health checks
-
-The existing `wg0.conf` file in this directory is unused by this setup.
 
 ## Environment
 
@@ -100,8 +98,8 @@ Host ubuntu-laptop-via-railway
 Then connect with:
 
 ```bash
-ssh railway-bastion
-ssh ubuntu-laptop-via-railway
+ssh railway-bastion ## ssh into the railway service
+ssh ubuntu-laptop-via-railway ## ssh into your ubuntu laptop using railway as JumpProxy
 ```
 
 ## Local smoke test
