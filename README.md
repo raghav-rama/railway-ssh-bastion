@@ -46,6 +46,10 @@ cat ~/.ssh/railway-tunnel.pub
 
 Put the public key value into `LAPTOP_TUNNEL_PUBLIC_KEY`.
 
+This tunnel key is only for the laptop to authenticate to the Railway bastion when opening the reverse tunnel. It is not the key you use later to log into the laptop through that tunnel.
+
+For the final client hop into the laptop, add the public key matching your local SSH `IdentityFile` to the laptop user's `~/.ssh/authorized_keys`.
+
 Create a `systemd` unit at `/etc/systemd/system/railway-reverse-ssh.service`:
 
 ```ini
@@ -95,6 +99,8 @@ Host ubuntu-laptop-via-railway
   Port 2201
   User <ubuntu-username>
   ProxyJump railway-bastion
+  IdentityFile ~/.ssh/<your-laptop-login-key>
+  IdentitiesOnly yes
 ```
 
 Then connect with:
