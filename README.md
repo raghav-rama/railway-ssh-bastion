@@ -2,6 +2,8 @@
 
 This project runs a small SSH bastion on Railway so you can reach a private Ubuntu laptop over a reverse SSH tunnel. Railway is the public jump host; the Ubuntu laptop calls out to Railway and keeps the tunnel open.
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/VBYa5q?referralCode=DhSSAV&utm_medium=integration&utm_source=template&utm_campaign=railway-ssh-bastion)
+
 Flow:
 
 `your client -> Railway bastion -> reverse tunnel -> Ubuntu laptop:22`
